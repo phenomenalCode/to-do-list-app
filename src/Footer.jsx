@@ -18,7 +18,7 @@ export const Footer = () => {
     >
       <Toolbar sx={{ justifyContent: 'center' }}>
         <Typography variant="body2">
-          © {new Date().getFullYear()} Task Manager — All rights reserved.
+          © {new Date().getFullYear()} Task Manager by Darius Olsson Carter — All rights reserved.
         </Typography>
       </Toolbar>
     </AppBar>
