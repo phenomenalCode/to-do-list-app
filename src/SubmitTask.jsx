@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useTaskStore } from './store/useTaskStore';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   Box,
   Button,
@@ -137,14 +140,26 @@ export const SubmitTask = () => {
           </Stack>
 
           {/* Due date */}
-          <TextField
-            type="date"
-            label="Due Date"
-            InputLabelProps={{ shrink: true }}
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            fullWidth
-          />
+         
+<LocalizationProvider dateAdapter={AdapterDateFns}>
+  <DatePicker
+    label="Due Date"
+    value={dueDate || null}
+    onChange={(newValue) => {
+      setDueDate(newValue?.toISOString().split('T')[0] || '');
+    }}
+    slotProps={{
+      textField: {
+        fullWidth: true,
+        sx: {
+          '& .MuiSvgIcon-root': {
+            color: theme.palette.mode === 'dark' ? 'purple' : 'inherit',
+          },
+        },
+      },
+    }}
+  />
+</LocalizationProvider>
 
           {/* Submit */}
           <Button
