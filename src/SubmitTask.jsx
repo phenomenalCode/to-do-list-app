@@ -1,8 +1,6 @@
+// SubmitTask.jsx
 import React, { useState } from 'react';
 import { useTaskStore } from './store/useTaskStore';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   Box,
   Button,
@@ -15,16 +13,22 @@ import {
   Stack,
 } from '@mui/material';
 
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns }       from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker }           from '@mui/x-date-pickers/DatePicker';
+
 export const SubmitTask = () => {
-  const theme = useTheme();
+  const theme                            = useTheme();
   const { addTask, projects, addProject } = useTaskStore();
 
-  const [input, setInput] = useState('');
-  const [category, setCategory] = useState('');
-  const [projectId, setProjectId] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [newProject, setNewProject] = useState('');
+  /* ------------ form state ------------ */
+  const [input,       setInput]       = useState('');
+  const [category,    setCategory]    = useState('');
+  const [projectId,   setProjectId]   = useState('');
+  const [dueDate,     setDueDate]     = useState(null);  // ▶ Date object
+  const [newProject,  setNewProject]  = useState('');
 
+  /* ------------ project helpers ------------ */
   const handleAddProject = () => {
     const name = newProject.trim();
     if (!name) return;
@@ -34,6 +38,7 @@ export const SubmitTask = () => {
     setNewProject('');
   };
 
+  /* ------------ submit ------------ */
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!input.trim()) {
@@ -42,18 +47,21 @@ export const SubmitTask = () => {
     }
 
     addTask({
-      task: input.trim(),
+      task      : input.trim(),
       category,
-      projectId: projectId || null,
-      dueDate: dueDate || null,
+      projectId : projectId || null,
+      /* save as "yyyy-MM-dd" or null */
+      dueDate   : dueDate ? dueDate.toISOString().split('T')[0] : null,
     });
 
+    // clear
     setInput('');
     setCategory('');
     setProjectId('');
-    setDueDate('');
+    setDueDate(null);
   };
 
+  /* ------------ UI ------------ */
   return (
     <Box
       sx={{
@@ -88,12 +96,9 @@ export const SubmitTask = () => {
               onChange={(e) => setCategory(e.target.value)}
               label="Category"
             >
-              <MenuItem value="Work">Work</MenuItem>
-              <MenuItem value="Home">Home</MenuItem>
-              <MenuItem value="Health">Health</MenuItem>
-              <MenuItem value="Errands">Errands</MenuItem>
-              <MenuItem value="Leisure">Leisure</MenuItem>
-              <MenuItem value="Other">Other</MenuItem>
+              {['Work','Home','Health','Errands','Leisure','Other'].map(c => (
+                <MenuItem key={c} value={c}>{c}</MenuItem>
+              ))}
             </Select>
           </FormControl>
 
@@ -106,7 +111,7 @@ export const SubmitTask = () => {
               label="Project"
             >
               <MenuItem value="">None</MenuItem>
-              {projects.map((p) => (
+              {projects.map(p => (
                 <MenuItem key={p.id} value={p.id}>
                   {p.name} {p.completed ? '✅' : ''}
                 </MenuItem>
@@ -115,11 +120,7 @@ export const SubmitTask = () => {
           </FormControl>
 
           {/* Inline new-project creator */}
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={1}
-            alignItems={{ sm: 'center' }}
-          >
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
             <TextField
               label="New Project"
               value={newProject}
@@ -130,44 +131,38 @@ export const SubmitTask = () => {
             <Button
               variant="outlined"
               onClick={handleAddProject}
-              fullWidth={{ xs: true, sm: false }}
-              sx={{
-                width: { xs: '100%', sm: 'auto' },
-              }}
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
               Add
             </Button>
           </Stack>
 
-          {/* Due date */}
-         
-<LocalizationProvider dateAdapter={AdapterDateFns}>
-  <DatePicker
-    label="Due Date"
-    value={dueDate || null}
-    onChange={(newValue) => {
-      setDueDate(newValue?.toISOString().split('T')[0] || '');
-    }}
-    slotProps={{
-      textField: {
-        fullWidth: true,
-        sx: {
-          '& .MuiSvgIcon-root': {
-            color: theme.palette.mode === 'dark' ? 'purple' : 'inherit',
-          },
-        },
-      },
-    }}
-  />
-</LocalizationProvider>
+          {/* Due date – MUI DatePicker */}
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Due Date"
+              value={dueDate}
+              onChange={(newVal) => setDueDate(newVal)}
+              /* TextField props */
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  /* purple calendar icon in dark-mode */
+                  sx: {
+                    '& .MuiSvgIcon-root': {
+                      color:
+                        theme.palette.mode === 'dark'
+                          ? theme.palette.primary.main
+                          : 'inherit',
+                    },
+                  },
+                },
+              }}
+            />
+          </LocalizationProvider>
 
           {/* Submit */}
-          <Button
-            variant="contained"
-            type="submit"
-            size="large"
-            fullWidth
-          >
+          <Button type="submit" variant="contained" size="large" fullWidth>
             Add Task
           </Button>
         </Stack>
@@ -175,10 +170,3 @@ export const SubmitTask = () => {
     </Box>
   );
 };
-// This component allows users to submit new tasks with optional categories, projects, and due dates.
-// It also includes functionality to create new projects inline.    
-// The form is styled to fit well within the app's theme and layout, ensuring a consistent user experience.
-// The SubmitTask component is designed to be reusable and adaptable, making it easy to integrate into different parts of the application or modify for future requirements.
-// It uses Material-UI components for a clean and modern look, enhancing usability and accessibility.
-// The component is responsive, adjusting its layout based on the screen size, ensuring a good user experience on both mobile and desktop devices.
-// The SubmitTask component is a key part of the to-do list application, providing a user-friendly interface for adding new tasks.
