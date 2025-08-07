@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useTaskStore } from './store/useTaskStore';
 import { Header } from './Header';
 import { SubmitTask } from './SubmitTask';
 import { DisplayTasks } from './DisplayTasks';
 import { Footer } from './Footer';
-import './index.css'; // Import your CSS styles
+import './index.css';
 import {
   Box,
   Button,
@@ -16,38 +16,48 @@ import {
   ThemeProvider,
 } from '@mui/material';
 
+// // Optionally lazy load heavy components:
+// const Header = React.lazy(() => import('./Header'));
+// const SubmitTask = React.lazy(() => import('./SubmitTask'));
+// const DisplayTasks = React.lazy(() => import('./DisplayTasks'));
+// const Footer = React.lazy(() => import('./Footer'));
+
 export const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const tasks = useTaskStore((s) => s.tasks);
 
-  /* ---------- THEME ---------- */
-  const theme = createTheme({
-    palette: {
-      mode: darkMode ? 'dark' : 'light',
-      primary: {
-        main: darkMode ? '#9c27b0' : '#1976d2',
-        contrastText: '#fff',
-      },
-      background: {
-        default: darkMode ? '#000' : '#fff',
-        paper: darkMode ? '#1a1a1a' : '#f5f5f5',
-      },
-    },
-  });
+  // Memoize theme to prevent recreation on every render
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: darkMode ? 'dark' : 'light',
+          primary: {
+            main: darkMode ? '#9c27b0' : '#1976d2',
+            contrastText: '#fff',
+          },
+          background: {
+            default: darkMode ? '#000' : '#fff',
+            paper: darkMode ? '#1a1a1a' : '#f5f5f5',
+          },
+        },
+      }),
+    [darkMode]
+  );
 
-  /* ---------- HANDLERS ---------- */
-  const toggleDarkMode = () => setDarkMode((p) => !p);
-  const completeAll    = () => {
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode((prev) => !prev);
+  }, []);
+
+  const completeAll = () => {
     const { tasks, toggleTaskCompletion } = useTaskStore.getState();
     tasks.forEach((t) => !t.completed && toggleTaskCompletion(t.id));
   };
 
-  /* ---------- RENDER ---------- */
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
 
-      {/* page background */}
       <Box
         sx={{
           minHeight: '100vh',
@@ -57,7 +67,7 @@ export const App = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          pb: { xs: 10, md: 8 },      /* extra space for fixed footer on mobile */
+          pb: { xs: 10, md: 8 },
         }}
       >
         <Header />
@@ -69,22 +79,20 @@ export const App = () => {
             px: { xs: 1, sm: 2, md: 4 },
             display: 'flex',
             gap: { xs: 2, md: 4 },
-            flexDirection: { xs: 'column', md: 'row' },   /* stack < 960 px */
+            flexDirection: { xs: 'column', md: 'row' },
           }}
         >
-          {/* -------- Sidebar (hidden on phones) -------- */}
-         <Box
-  className="display-tasks-wrapper"
-  sx={{
-    flex: { xs: ' 100%', md: '0 0 280px' },
-    display: 'block', //  always visible
-    order: { xs: 2, md: 1 },
-  }}
->
-  <DisplayTasks />
-</Box>
+          <Box
+            className="display-tasks-wrapper"
+            sx={{
+              flex: { xs: '100%', md: '0 0 280px' },
+              display: 'block',
+              order: { xs: 2, md: 1 },
+            }}
+          >
+            <DisplayTasks />
+          </Box>
 
-          {/* -------- Main column -------- */}
           <Box
             sx={(theme) => ({
               order: { xs: 1, md: 2 },
@@ -94,7 +102,7 @@ export const App = () => {
               alignItems: 'center',
               gap: 3,
               width: '100%',
-              maxWidth: { md: 900, lg: 1100 },        /* stop stretching */
+              maxWidth: { md: 900, lg: 1100 },
               p: { xs: 2, sm: 3, md: 4 },
               borderRadius: 2,
               boxShadow: 4,
@@ -105,7 +113,6 @@ export const App = () => {
               color: theme.palette.text.primary,
             })}
           >
-            {/* --- Stats panel --- */}
             <Paper
               elevation={4}
               sx={{
@@ -124,12 +131,9 @@ export const App = () => {
               </Typography>
             </Paper>
 
-            {/* --- Task form --- */}
             <SubmitTask />
 
-            {/* --- Buttons --- */}
             <Box sx={{ display: 'flex', gap: 2 }}>
-            
               <Button variant="outlined" onClick={toggleDarkMode}>
                 {darkMode ? 'Light Mode' : 'Dark Mode'}
               </Button>

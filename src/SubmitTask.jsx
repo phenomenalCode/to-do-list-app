@@ -129,7 +129,8 @@ export const SubmitTask = () => {
               fullWidth
             />
             <Button
-              variant="outlined"
+              variant="contained"
+              color="primary"
               onClick={handleAddProject}
               sx={{ width: { xs: '100%', sm: 'auto' } }}
             >

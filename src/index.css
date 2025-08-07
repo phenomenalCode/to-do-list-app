@@ -12,11 +12,11 @@
 }
 
 .dark-background {
-  background-image: url('/photos/stars-night-galaxy-4k-3840x2160.jpg');
+  background-image: url('/photos/stars-night-galaxy-4k-3840x2160.webp');
 }
 
 .light-background {
-  background-image: url('/photos/7247856.jpg');
+  background-image: url('/photos/7247856.webp');
 }
 /* --------------  MOBILE 0-600px -------------- */
 @media (max-width: 600px) {
