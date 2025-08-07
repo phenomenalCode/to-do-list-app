@@ -4,21 +4,30 @@ import { AppBar, Toolbar, Typography, useTheme } from '@mui/material';
 export const Footer = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const currentYear = new Date().getFullYear();
 
   return (
     <AppBar
-      position="fixed"
-      elevation={2}
+      component="footer"
+      position="static"
+      elevation={1}
       sx={{
-        top: 'auto',
-        bottom: 0,
+        mt: 'auto',
         bgcolor: isDark ? 'background.default' : 'primary.main',
         color: isDark ? 'text.secondary' : 'primary.contrastText',
+        py: 1.5,
       }}
     >
-      <Toolbar sx={{ justifyContent: 'center' }}>
-        <Typography variant="body2">
-          © {new Date().getFullYear()} Task Manager by Darius Olsson Carter — All rights reserved.
+      <Toolbar disableGutters sx={{ justifyContent: 'center', px: 2 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            fontSize: '0.875rem',
+            textAlign: 'center',
+            lineHeight: 1.5,
+          }}
+        >
+          © {currentYear} Task Manager by Darius Olsson Carter — All rights reserved.
         </Typography>
       </Toolbar>
     </AppBar>

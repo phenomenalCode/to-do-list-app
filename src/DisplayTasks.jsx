@@ -11,6 +11,8 @@ import {
   Select,
   MenuItem,
   useTheme,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 export const DisplayTasks = () => {
@@ -115,31 +117,37 @@ export const DisplayTasks = () => {
         </Typography>
 
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
-          <Select
-            size="small"
-            value={show}
-            onChange={e => setShow(e.target.value)}
-            aria-label="Filter tasks"
-            sx={{ minWidth: { xs: 120, sm: 140 } }}
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="completed">Completed</MenuItem>
-            <MenuItem value="uncompleted">Uncompleted</MenuItem>
-          </Select>
+          <FormControl size="small" sx={{ minWidth: { xs: 120, sm: 140 } }}>
+            <InputLabel id="filter-tasks-label">Filter</InputLabel>
+            <Select
+              labelId="filter-tasks-label"
+              id="filter-tasks"
+              value={show}
+              label="Filter"
+              onChange={e => setShow(e.target.value)}
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="uncompleted">Uncompleted</MenuItem>
+            </Select>
+          </FormControl>
 
-          <Select
-            size="small"
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-            aria-label="Sort tasks"
-            sx={{ minWidth: { xs: 140, sm: 160 } }}
-          >
-            <MenuItem value="created-desc">Newest First</MenuItem>
-            <MenuItem value="created-asc">Oldest First</MenuItem>
-            <MenuItem value="due-asc">Due Soonest</MenuItem>
-            <MenuItem value="due-desc">Due Latest</MenuItem>
-            <MenuItem value="category">Category A→Z</MenuItem>
-          </Select>
+          <FormControl size="small" sx={{ minWidth: { xs: 140, sm: 160 } }}>
+            <InputLabel id="sort-tasks-label">Sort by</InputLabel>
+            <Select
+              labelId="sort-tasks-label"
+              id="sort-tasks"
+              value={sortBy}
+              label="Sort by"
+              onChange={e => setSortBy(e.target.value)}
+            >
+              <MenuItem value="created-desc">Newest First</MenuItem>
+              <MenuItem value="created-asc">Oldest First</MenuItem>
+              <MenuItem value="due-asc">Due Soonest</MenuItem>
+              <MenuItem value="due-desc">Due Latest</MenuItem>
+              <MenuItem value="category">Category A→Z</MenuItem>
+            </Select>
+          </FormControl>
 
           <Button
             size="small"
