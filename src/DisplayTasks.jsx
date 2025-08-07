@@ -193,21 +193,26 @@ export const DisplayTasks = () => {
                     gap: 1,
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Checkbox
-                      checked={task.completed}
-                      onChange={() => toggleTaskCompletion(task.id)}
-                      aria-label={`Mark task "${task.task}" as ${task.completed ? 'incomplete' : 'complete'}`}
-                    />
-                    <Typography
-                      sx={{
-                        textDecoration: task.completed ? 'line-through' : 'none',
-                        wordBreak: 'break-word',
-                      }}
-                    >
-                      {task.task}
-                    </Typography>
-                  </Box>
+                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+  <Checkbox
+    id={`task-checkbox-${task.id}`}
+    checked={task.completed}
+    onChange={() => toggleTaskCompletion(task.id)}
+    inputProps={{
+      'aria-labelledby': `task-label-${task.id}`,
+    }}
+  />
+  <Typography
+    id={`task-label-${task.id}`}
+    sx={{
+      textDecoration: task.completed ? 'line-through' : 'none',
+      wordBreak: 'break-word',
+    }}
+  >
+    {task.task}
+  </Typography>
+</Box>
+
 
                   <Button
                     size="small"
