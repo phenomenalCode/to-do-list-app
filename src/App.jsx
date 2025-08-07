@@ -62,8 +62,8 @@ export const App = () => {
         sx={{
           minHeight: '100vh',
           backgroundImage: darkMode
-            ? 'url(/photos/stars-night-galaxy-4k-3840x2160.jpg)'
-            : 'url(/photos/7247856.jpg)',
+            ? 'url(/photos/stars-night-galaxy-4k-3840x2160.webp)'
+            : 'url(/photos/7247856.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -134,7 +134,7 @@ export const App = () => {
             <SubmitTask />
 
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" onClick={toggleDarkMode}>
+              <Button variant="contained" color="primary" onClick={toggleDarkMode}>
                 {darkMode ? 'Light Mode' : 'Dark Mode'}
               </Button>
             </Box>

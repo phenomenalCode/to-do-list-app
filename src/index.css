@@ -1,16 +1,14 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
-
 .dark-background,
 .light-background {
-  background-size: 75%; /* Smaller image size */
+  background-size: 75%; /* Adjusts visual size */
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   height: 100vh;
 }
-
 .dark-background {
   background-image: url('/photos/stars-night-galaxy-4k-3840x2160.webp');
 }
@@ -18,6 +16,8 @@
 .light-background {
   background-image: url('/photos/7247856.webp');
 }
+
+
 /* --------------  MOBILE 0-600px -------------- */
 @media (max-width: 600px) {
   .display-tasks            { padding: 16px; }
