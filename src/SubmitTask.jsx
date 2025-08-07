@@ -59,126 +59,137 @@ export const SubmitTask = () => {
 
   // ---------------- UI ----------------
   return (
-    <Box
-      role="form"
-      aria-label="Task submission form"
-      sx={{
-        p: { xs: 2, sm: 3, md: 4 },
-        width: '100%',
-        maxWidth: { xs: '100%', sm: 500 },
-        mx: 'auto',
-        bgcolor:
-          theme.palette.mode === 'dark'
-            ? theme.palette.background.default
-            : '#eeeeee',
-        color: theme.palette.text.primary,
-        borderRadius: 2,
-        boxShadow: 4,
-      }}
+  <Box
+    role="form"
+    aria-label="Task submission form"
+    sx={{
+      p: { xs: 2, sm: 3, md: 4 },
+      width: '100%',
+      maxWidth: { xs: '100%', sm: 500 },
+      mx: 'auto',
+      bgcolor:
+        theme.palette.mode === 'dark'
+          ? theme.palette.background.default
+          : '#eeeeee',
+      color: theme.palette.text.primary,
+      borderRadius: 2,
+      boxShadow: 4,
+    }}
+  >
+    {/* Promoted heading */}
+    <Typography
+      component="h2"
+      variant="h4"
+      gutterBottom
+      sx={{ textAlign: 'center' }}
     >
-      <form onSubmit={handleSubmit}>
-        <Stack spacing={2}>
-          {/* Task input */}
-          <TextField
-            label="Enter Task"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            fullWidth
-            required
-            inputProps={{ 'aria-label': 'Task name input' }}
-          />
+      To Do List
+    </Typography>
 
-          {/* Category */}
-          <FormControl fullWidth>
-            <InputLabel id="category-label">Category</InputLabel>
-            <Select
-              labelId="category-label"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              label="Category"
-              inputProps={{ 'aria-label': 'Select task category' }}
-            >
-              {['Work', 'Home', 'Health', 'Errands', 'Leisure', 'Other'].map((c) => (
-                <MenuItem key={c} value={c}>{c}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+    <form onSubmit={handleSubmit}>
+      <Stack spacing={2}>
+        {/* Task input */}
+        <TextField
+          label="Enter Task"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          fullWidth
+          required
+          inputProps={{ 'aria-label': 'Task name input' }}
+        />
 
-          {/* Project selection */}
-          <FormControl fullWidth>
-            <InputLabel id="project-label">Project</InputLabel>
-            <Select
-              labelId="project-label"
-              value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
-              label="Project"
-              inputProps={{ 'aria-label': 'Select project for task' }}
-            >
-              <MenuItem value="">None</MenuItem>
-              {projects.map((p) => (
-                <MenuItem key={p.id} value={p.id}>
-                  {p.name} {p.completed ? '✅' : ''}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {/* Inline new project creator */}
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-            <TextField
-              label="New Project"
-              value={newProject}
-              onChange={(e) => setNewProject(e.target.value)}
-              size="small"
-              fullWidth
-              inputProps={{ 'aria-label': 'New project name input' }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddProject}
-              aria-label="Add new project"
-              sx={{ width: { xs: '100%', sm: 'auto' } }}
-            >
-              Add
-            </Button>
-          </Stack>
-
-          {/* Due Date Picker */}
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Due Date"
-              value={dueDate}
-              onChange={(newVal) => setDueDate(newVal)}
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  inputProps: { 'aria-label': 'Select due date for task' },
-                  sx: {
-                    '& .MuiSvgIcon-root': {
-                      color:
-                        theme.palette.mode === 'dark'
-                          ? theme.palette.primary.main
-                          : 'inherit',
-                    },
-                  },
-                },
-              }}
-            />
-          </LocalizationProvider>
-
-          {/* Submit button */}
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
-            fullWidth
-            aria-label="Submit new task"
+        {/* Category */}
+        <FormControl fullWidth>
+          <InputLabel id="category-label">Category</InputLabel>
+          <Select
+            labelId="category-label"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            label="Category"
+            inputProps={{ 'aria-label': 'Select task category' }}
           >
-            Add Task
+            {['Work', 'Home', 'Health', 'Errands', 'Leisure', 'Other'].map((c) => (
+              <MenuItem key={c} value={c}>{c}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Project selection */}
+        <FormControl fullWidth>
+          <InputLabel id="project-label">Project</InputLabel>
+          <Select
+            labelId="project-label"
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
+            label="Project"
+            inputProps={{ 'aria-label': 'Select project for task' }}
+          >
+            <MenuItem value="">None</MenuItem>
+            {projects.map((p) => (
+              <MenuItem key={p.id} value={p.id}>
+                {p.name} {p.completed ? '✅' : ''}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Inline new project creator */}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+          <TextField
+            label="New Project"
+            value={newProject}
+            onChange={(e) => setNewProject(e.target.value)}
+            size="small"
+            fullWidth
+            inputProps={{ 'aria-label': 'New project name input' }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddProject}
+            aria-label="Add new project"
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+          >
+            Add
           </Button>
         </Stack>
-      </form>
-    </Box>
-  );
+
+        {/* Due Date Picker */}
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="Due Date"
+            value={dueDate}
+            onChange={(newVal) => setDueDate(newVal)}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                inputProps: { 'aria-label': 'Select due date for task' },
+                sx: {
+                  '& .MuiSvgIcon-root': {
+                    color:
+                      theme.palette.mode === 'dark'
+                        ? theme.palette.primary.main
+                        : 'inherit',
+                  },
+                },
+              },
+            }}
+          />
+        </LocalizationProvider>
+
+        {/* Submit button */}
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          fullWidth
+          aria-label="Submit new task"
+        >
+          Add Task
+        </Button>
+      </Stack>
+    </form>
+  </Box>
+);
+
 };
