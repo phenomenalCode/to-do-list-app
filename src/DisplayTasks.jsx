@@ -14,11 +14,8 @@ import {
 } from '@mui/material';
 
 export const DisplayTasks = () => {
-  /* ------------ local UI state ------------ */
-  const [show,   setShow]  = useState('all');          // filter
-  const [sortBy, setSortBy] = useState('created-desc'); // sort
-
-  /* ------------ data from store ------------ */
+  const [show, setShow] = useState('all');
+  const [sortBy, setSortBy] = useState('created-desc');
   const {
     tasks: rawTasks,
     projects,
@@ -28,37 +25,30 @@ export const DisplayTasks = () => {
     deleteProject,
   } = useTaskStore();
 
-  const theme      = useTheme();
+  const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
-  /* ----- filter first ----- */
-  const filtered = useMemo(() => {
-    switch (show) {
-      case 'completed':   return rawTasks.filter(t => t.completed);
-      case 'uncompleted': return rawTasks.filter(t => !t.completed);
-      default:            return rawTasks;
-    }
+  const filteredTasks = useMemo(() => {
+    if (show === 'completed') return rawTasks.filter(t => t.completed);
+    if (show === 'uncompleted') return rawTasks.filter(t => !t.completed);
+    return rawTasks;
   }, [rawTasks, show]);
 
-  /* ----- then sort ----- */
   const tasks = useMemo(() => {
-    const sorted = [...filtered];
-    sorted.sort((a, b) => {
+    return [...filteredTasks].sort((a, b) => {
       switch (sortBy) {
-        case 'due-asc':     return (a.dueDate || '').localeCompare(b.dueDate || '');
-        case 'due-desc':    return (b.dueDate || '').localeCompare(a.dueDate || '');
-        case 'created-asc': return  a.createdAt.localeCompare(b.createdAt);
-        case 'created-desc':return  b.createdAt.localeCompare(a.createdAt);
-        case 'category':    return (a.category || '').localeCompare(b.category || '');
-        default:            return 0;
+        case 'due-asc': return (a.dueDate || '').localeCompare(b.dueDate || '');
+        case 'due-desc': return (b.dueDate || '').localeCompare(a.dueDate || '');
+        case 'created-asc': return a.createdAt.localeCompare(b.createdAt);
+        case 'created-desc': return b.createdAt.localeCompare(a.createdAt);
+        case 'category': return (a.category || '').localeCompare(b.category || '');
+        default: return 0;
       }
     });
-    return sorted;
-  }, [filtered, sortBy]);
+  }, [filteredTasks, sortBy]);
 
-  const uncompleted = tasks.filter(t => !t.completed).length;
+  const uncompletedCount = tasks.filter(t => !t.completed).length;
 
-  /* ----- empty state ----- */
   if (!tasks.length) {
     return (
       <Typography
@@ -68,15 +58,38 @@ export const DisplayTasks = () => {
           textAlign: 'center',
           fontSize: { xs: '1rem', sm: '1.2rem', md: '1.3rem' },
         }}
+        aria-live="polite"
       >
         No tasks to display.
       </Typography>
     );
   }
 
-  /* ----- UI ----- */
+  const renderDueDate = (task) => {
+    if (!task.dueDate) return null;
+    const due = new Date(task.dueDate);
+    const hoursLeft = (due.getTime() - Date.now()) / 36e5;
+    const dueSoon = hoursLeft > 0 && hoursLeft <= 24 && !task.completed;
+
+    return (
+      <Typography
+        variant="caption"
+        sx={{
+          mt: 0.2,
+          display: 'block',
+          fontStyle: 'italic',
+          color: dueSoon ? 'red' : 'inherit',
+        }}
+      >
+        Due: {due.toLocaleDateString()} {due.toLocaleTimeString()}
+      </Typography>
+    );
+  };
+
   return (
     <Paper
+      role="region"
+      aria-label="Task list"
       elevation={3}
       sx={{
         p: { xs: 2, sm: 3 },
@@ -86,9 +99,8 @@ export const DisplayTasks = () => {
         bgcolor: 'background.paper',
       }}
     >
-      {/* ---------- header controls ---------- */}
+      {/* Header controls */}
       <Box
-        className="filter-actions"
         sx={{
           display: 'flex',
           flexDirection: { xs: 'column', sm: 'row' },
@@ -99,7 +111,7 @@ export const DisplayTasks = () => {
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 500 }}>
-          Tasks ({tasks.length}) • Uncompleted ({uncompleted})
+          Tasks ({tasks.length}) • Uncompleted ({uncompletedCount})
         </Typography>
 
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
@@ -107,6 +119,7 @@ export const DisplayTasks = () => {
             size="small"
             value={show}
             onChange={e => setShow(e.target.value)}
+            aria-label="Filter tasks"
             sx={{ minWidth: { xs: 120, sm: 140 } }}
           >
             <MenuItem value="all">All</MenuItem>
@@ -118,6 +131,7 @@ export const DisplayTasks = () => {
             size="small"
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
+            aria-label="Sort tasks"
             sx={{ minWidth: { xs: 140, sm: 160 } }}
           >
             <MenuItem value="created-desc">Newest First</MenuItem>
@@ -127,7 +141,12 @@ export const DisplayTasks = () => {
             <MenuItem value="category">Category A→Z</MenuItem>
           </Select>
 
-          <Button size="small" variant="contained" onClick={completeAllTasks}>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={completeAllTasks}
+            aria-label="Mark all tasks as complete"
+          >
             Complete All
           </Button>
         </Box>
@@ -135,22 +154,20 @@ export const DisplayTasks = () => {
 
       <Divider sx={{ mb: 2 }} />
 
-      {/* ---------- tasks ---------- */}
-      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+      {/* Task List */}
+      <ul aria-label="Task list" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
         {tasks.map(task => {
           const project = projects.find(p => p.id === task.projectId);
-          const overdue =
-            task.dueDate && new Date(task.dueDate) < new Date() && !task.completed;
-
-          const statusLabel  = overdue
+          const overdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.completed;
+          const statusLabel = overdue
             ? 'Overdue'
             : task.completed ? 'Completed' : 'Incomplete';
-          const statusColor  = overdue
+          const statusColor = overdue
             ? 'error'
             : task.completed ? 'success' : 'warning';
 
           return (
-            <li key={task.id} style={{ marginBottom: '1rem' }}>
+            <li key={task.id} role="listitem" style={{ marginBottom: '1rem' }}>
               <Box
                 sx={{
                   p: { xs: 1.5, sm: 2 },
@@ -159,7 +176,6 @@ export const DisplayTasks = () => {
                   bgcolor: 'background.default',
                 }}
               >
-                {/* top row */}
                 <Box
                   sx={{
                     display: 'flex',
@@ -173,6 +189,7 @@ export const DisplayTasks = () => {
                     <Checkbox
                       checked={task.completed}
                       onChange={() => toggleTaskCompletion(task.id)}
+                      aria-label={`Mark task "${task.task}" as ${task.completed ? 'incomplete' : 'complete'}`}
                     />
                     <Typography
                       sx={{
@@ -188,12 +205,12 @@ export const DisplayTasks = () => {
                     size="small"
                     color="error"
                     onClick={() => deleteTask(task.id)}
+                    aria-label={`Delete task "${task.task}"`}
                   >
                     Delete
                   </Button>
                 </Box>
 
-                {/* meta */}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
                   <Typography variant="body2"><strong>Status:</strong></Typography>
                   <Chip label={statusLabel} color={statusColor} size="small" />
@@ -213,6 +230,7 @@ export const DisplayTasks = () => {
                       size="small"
                       color="error"
                       onClick={() => deleteProject(project.id)}
+                      aria-label={`Delete project "${project.name}"`}
                       sx={{ ml: 1, minWidth: 0, px: 0.5, lineHeight: 1 }}
                     >
                       ✕
@@ -224,24 +242,7 @@ export const DisplayTasks = () => {
                   Created: {new Date(task.createdAt).toLocaleString()}
                 </Typography>
 
-                {task.dueDate && (() => {
-                  const due       = new Date(task.dueDate);
-                  const hoursLeft = (due.getTime() - Date.now()) / 36e5;
-                  const dueSoon   = hoursLeft > 0 && hoursLeft <= 24 && !task.completed;
-                  return (
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        mt: 0.2,
-                        display: 'block',
-                        fontStyle: 'italic',
-                        color: dueSoon ? 'red' : 'inherit',
-                      }}
-                    >
-                      Due: {due.toLocaleDateString()} {due.toLocaleTimeString()}
-                    </Typography>
-                  );
-                })()}
+                {renderDueDate(task)}
               </Box>
             </li>
           );
@@ -250,9 +251,3 @@ export const DisplayTasks = () => {
     </Paper>
   );
 };
-
-// This component displays the list of tasks with filtering and sorting options.
-// It allows users to mark tasks as completed, delete tasks, and view project details.  
-// It also includes functionality to delete projects directly from the task list.
-// It uses Material-UI components for styling and layout.
-// The tasks are displayed in a responsive layout with options to filter by status and sort by various criteria.
