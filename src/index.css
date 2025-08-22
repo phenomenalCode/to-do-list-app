@@ -18,31 +18,33 @@
 }
 
 
-/* --------------  MOBILE 0-600px -------------- */
+
+/* -------------- MOBILE 0-600px -------------- */
 @media (max-width: 600px) {
-  .display-tasks            { padding: 16px; }
-  .filter-actions           { flex-direction: column; align-items: stretch; }
-  .filter-actions > *       { width: 100%; }
-  .task-item                { margin-bottom: 12px; }
-  .task-card                { padding: 12px; }
-  .task-top                 { flex-direction: column; align-items: flex-start; }
-  .task-delete              { width: 100%; margin-top: 6px; }
+  .display-tasks { padding: 1rem; }
+  .filter-actions { flex-direction: column; }
 }
 
-/* --------------  SMALL TABLET 601-900px -------------- */
+/* -------------- SMALL TABLET 601-900px -------------- */
 @media (min-width: 601px) and (max-width: 900px) {
-  .display-tasks            { max-width: 90%; }
-  .filter-actions           { flex-wrap: nowrap; }
-  .filter-actions > *       { flex: 0 0 auto; }
-  .task-delete              { width: auto; }
+  .display-tasks { max-width: 90%; }
+  .filter-actions { flex-direction: row; }
 }
 
-/* --------------  MEDIUM 901-1200px -------------- */
+/* -------------- MEDIUM 901-1200px -------------- */
 @media (min-width: 901px) and (max-width: 1200px) {
-  .display-tasks            { max-width: 80%; }
+  .display-tasks { max-width: 80%; }
+  .filter-actions { flex-direction: row; }
 }
 
-/* --------------  DESKTOP ≥1201px -------------- */
-@media (min-width: 1201px) {
-  .display-tasks            { max-width: 600px; }
+/* -------------- DESKTOP 1201-1600px -------------- */
+@media (min-width: 1201px) and (max-width: 1600px) {
+  .display-tasks { max-width: 700px; }
+  .filter-actions { flex-direction: row; }
+}
+
+/* -------------- LARGE DESKTOP ≥1601px -------------- */
+@media (min-width: 1601px) {
+  .display-tasks { max-width: 900px; }
+  .filter-actions { flex-direction: row; }
 }
