@@ -282,9 +282,7 @@ export const DisplayTasks = () => {
                     <strong>Status:</strong>
                   </Typography>
 
-                  {/* Accessible Chip:
-                      - For warning: custom bg + explicit label color (avoid color="warning")
-                      - For others: default colors are OK */}
+                  {/* Accessible Chip: */}
                   {statusKind === 'warning' ? (
                     <Chip
                       label={statusLabel}
@@ -342,3 +340,14 @@ export const DisplayTasks = () => {
     </Paper>
   );
 };
+//Fixed warning Chip contrast for dark mode by using a darker orange background and white text to meet WCAG standards.
+
+// Added responsive text wrapping and ellipsis for Filter and Sort dropdowns to prevent overflow.
+
+// Updated header typography to wrap on small screens and prevent overflow (minWidth: 0, overflowWrap: 'break-word').
+
+// Highlighted due-soon tasks using theme’s error.main color instead of inline red.
+
+// Added accessibility improvements: aria-labelledby on checkboxes, role="region" and aria-label for task list.
+
+// Ensured layout is responsive and compatible with both dark and light modes.
